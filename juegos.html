@@ -30,7 +30,7 @@
         .logo-nav { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 12px; }
         .logo-nav img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
         
-        nav ul { display: flex; list-style: none; gap: 25px; align-items: center; }
+        nav ul { display: flex; list-style: none; gap: 20px; align-items: center; }
         nav ul li a { color: var(--text-color); text-decoration: none; font-size: 1rem; font-weight: 500; transition: color 0.3s, transform 0.3s; display: inline-block; }
         nav ul li a:hover, nav ul li a.active { color: var(--primary-color); transform: translateY(-2px); }
 
@@ -54,28 +54,19 @@
             margin: 20px auto;
             border-radius: 10px;
             border: 2px solid var(--primary-color);
-            /* Efecto de brillo de neón sutil por defecto */
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.3), 0 5px 20px rgba(0,0,0,0.5);
             overflow: hidden;
             background: #0f0f1b;
             transition: box-shadow 0.4s ease, transform 0.4s ease;
         }
 
-        /* Efecto de neón más intenso al pasar el cursor */
         .game-image-container:hover {
             box-shadow: 0 0 25px rgba(255, 204, 0, 0.7), 0 0 40px rgba(255, 204, 0, 0.4);
             transform: translateY(-3px);
         }
 
-        /* Para la primera imagen (todos los personajes): más ancha y proporcionada */
-        .game-image-container.img-large {
-            max-width: 420px; 
-        }
-
-        /* Para las siguientes imágenes (más compactas) */
-        .game-image-container.img-normal {
-            max-width: 220px; 
-        }
+        .game-image-container.img-large { max-width: 420px; }
+        .game-image-container.img-normal { max-width: 220px; }
 
         .game-image-container img {
             width: 100%;
@@ -83,18 +74,38 @@
             display: block;
             transition: transform 0.5s ease;
         }
-        .game-image-container img:hover {
-            transform: scale(1.03);
-        }
+        .game-image-container img:hover { transform: scale(1.03); }
 
         .game-card p { color: #b8b8b8; font-size: 1.1rem; line-height: 1.8; }
 
         footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; }
         footer p { margin: 5px 0; }
 
+        /* --- MEDIA QUERY RESPONSIVO PARA MÓVILES Y TABLETS --- */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 12px; padding: 15px; }
-            .game-image-container { max-width: 100%; }
+            header { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding: 15px 20px; 
+                text-align: center; 
+            }
+            nav ul { 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                gap: 12px; 
+            }
+            nav ul li a { 
+                font-size: 0.9rem; 
+            }
+            .game-card {
+                padding: 25px 15px;
+            }
+            .game-card h2 {
+                font-size: 1.6rem;
+            }
+            .game-image-container { 
+                max-width: 100% !important; 
+            }
         }
 
         /* Evita selección de texto y arrastre de imágenes en todo el sitio */
@@ -116,7 +127,7 @@
         <nav>
             <ul>
                 <li><a href="index.html">Inicio</a></li>
-                <li><a href="juegos.html">Juegos</a></li>
+                <li><a href="juegos.html" class="active">Juegos</a></li>
                 <li><a href="mini-juego.html">Mini Juego</a></li>
                 <li><a href="descargas.html">Descargas</a></li>
                 <li><a href="info.html">INFO</a></li>

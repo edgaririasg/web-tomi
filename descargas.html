@@ -114,11 +114,37 @@
 
         footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; margin-top: 40px; }
 
+        /* --- MEDIA QUERY RESPONSIVO PARA MÓVILES Y TABLETS --- */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 12px; padding: 15px; }
+            header { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding: 15px 20px; 
+                text-align: center; 
+            }
+            nav ul { 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                gap: 12px; 
+            }
+            nav ul li a { 
+                font-size: 0.9rem; 
+            }
+            .project-card {
+                padding: 25px 15px;
+            }
+            .project-card h2 {
+                font-size: 1.8rem;
+            }
+            .coming-soon h3 {
+                font-size: 1.5rem;
+            }
+            .project-image-container { 
+                max-width: 100%; 
+            }
         }
 
-                /* Evita selección de texto y arrastre de imágenes en todo el sitio */
+        /* Evita selección de texto y arrastre de imágenes en todo el sitio */
         img {
             -webkit-user-drag: none;
             user-select: none;
@@ -126,7 +152,6 @@
             -webkit-user-select: none;
             -ms-user-select: none;
         }
-
     </style>
 </head>
 <body>

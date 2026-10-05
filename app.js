@@ -1,3 +1,25 @@
+// --- ESCUDO AVANZADO ANTI-INSPECTOR Y DEPURACIÓN (EJIC STUDIO) ---
+(function() {
+    // 1. Detección de apertura de DevTools por cambio de tamaño de ventana
+    const threshold = 160;
+    setInterval(() => {
+        if (
+            window.outerWidth - window.innerWidth > threshold ||
+            window.outerHeight - window.innerHeight > threshold
+        ) {
+            document.body.innerHTML = "<div style='background:#0f0f1b;color:#ffcc00;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:sans-serif;text-align:center;padding:20px;'><h1>⚠️ Acceso Restringido</h1><p>Las herramientas de desarrollo y el código fuente de EJIC STUDIO están protegidos por seguridad.</p></div>";
+        }
+    }, 1000);
+
+    // 2. Trampa de depuración (Debugger loop) para congelar la consola si intentan inspeccionar
+    setInterval(() => {
+        try {
+            (function () {}.constructor("debugger")());
+        } catch (e) {}
+    }, 1000);
+})();
+
+// --- DATOS DINÁMICOS DEL ESTUDIO ---
 const ejicData = {
     estudio: "EJIC STUDIO",
     fundador: "Edgar Josué Irías Castellanos",
@@ -107,6 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (
             e.key === "F12" || 
             (e.ctrlKey && e.shiftKey && e.key === "I") || 
+            (e.ctrlKey && e.shiftKey && e.key === "C") ||
+            (e.ctrlKey && e.shiftKey && e.key === "J") ||
             (e.ctrlKey && e.key === "u") || 
             (e.ctrlKey && e.key === "s") ||
             e.key === "PrintScreen"

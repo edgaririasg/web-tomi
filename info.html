@@ -210,9 +210,43 @@
 
         footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; margin-top: 40px; }
 
+        /* --- MEDIA QUERY RESPONSIVO PARA MÓVILES Y TABLETS --- */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 12px; padding: 15px; }
-            .info-grid { grid-template-columns: 1fr; }
+            header { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding: 15px 20px; 
+                text-align: center; 
+            }
+            nav ul { 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                gap: 12px; 
+            }
+            nav ul li a { 
+                font-size: 0.9rem; 
+            }
+            .contact-box {
+                padding: 25px 15px;
+            }
+            .contact-box h2 {
+                font-size: 2rem;
+            }
+            .info-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .neon-rotate-wrapper {
+                max-width: 100%;
+            }
+        }
+
+        /* Evita selección de texto y arrastre de imágenes en todo el sitio */
+        img {
+            -webkit-user-drag: none;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
         }
     </style>
 </head>

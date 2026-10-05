@@ -48,6 +48,7 @@
         .game-box h2 { color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem; }
         .game-box p { color: #b8b8b8; font-size: 1rem; margin-bottom: 20px; }
 
+        /* Lienzo responsivo adaptable a dispositivos móviles */
         canvas {
             background: linear-gradient(to bottom, #16213e, #0f0f1b);
             border: 2px solid var(--primary-color);
@@ -55,7 +56,9 @@
             box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
             display: block;
             margin: 0 auto;
-            max-width: 100%;
+            width: 100%;
+            max-width: 700px;
+            height: auto;
             cursor: pointer;
         }
 
@@ -68,8 +71,24 @@
 
         footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; margin-top: 40px; }
 
+        /* Media queries para adaptar el menú y contenedores en teléfonos */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 12px; padding: 15px; }
+            header { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding: 15px 20px; 
+            }
+            nav ul { 
+                flex-wrap: wrap; 
+                justify-content: center; 
+                gap: 12px; 
+            }
+            nav ul li a { 
+                font-size: 0.9rem; 
+            }
+            .game-box {
+                padding: 20px 10px;
+            }
         }
     </style>
 </head>
@@ -95,10 +114,11 @@
             <h2>Bao Bao Run</h2>
             <p>¡Ayuda a Bao Bao a superar los obstáculos y vallas en esta aventura de EJIC STUDIO!</p>
             
+            <!-- Lienzo configurado con resolución interna fija para cálculos precisos y adaptable visualmente con CSS -->
             <canvas id="gameCanvas" width="700" height="300"></canvas>
             
             <div class="instructions">
-                🎮 Presiona <b>Barra Espaciadora</b> o <b>Haz Clic</b> para saltar. ¡Cuidado con las vallas altas!
+                🎮 Presiona <b>Barra Espaciadora</b> o <b>Haz Clic / Toca la pantalla</b> para saltar.
             </div>
         </div>
     </div>
@@ -114,7 +134,7 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // Cargar la imagen real de Bao Bao sin fondo
+        // Cargar imagen de Bao Bao sin fondo
         const baoImage = new Image();
         baoImage.src = "img/bao_bao.png"; 
 
@@ -123,12 +143,11 @@
         let gameRunning = false;
         let gameSpeed = 6;
 
-        // Jugador (Bao Bao con tamaño amplio y proporción robusta)
         let player = {
             x: 60,
             y: 150,
-            width: 85,  // Ancho ampliado para que tenga excelente presencia
-            height: 95, // Altura ajustada proporcionalmente
+            width: 85,
+            height: 95,
             dy: 0,
             jumpPower: -12.5,
             gravity: 0.65,
@@ -139,6 +158,7 @@
         let obstacleTimer = 0;
         let obstacleInterval = 95;
 
+        // Controles de teclado y táctiles/clic para celulares
         document.addEventListener("keydown", (e) => {
             if (e.code === "Space") {
                 e.preventDefault();
@@ -147,6 +167,11 @@
         });
 
         canvas.addEventListener("click", () => {
+            triggerJump();
+        });
+
+        canvas.addEventListener("touchstart", (e) => {
+            e.preventDefault();
             triggerJump();
         });
 
@@ -174,7 +199,6 @@
         function update() {
             if (!gameRunning) return;
 
-            // Física del salto
             player.dy += player.gravity;
             player.y += player.dy;
 
@@ -185,7 +209,6 @@
                 player.grounded = true;
             }
 
-            // Generar obstáculos aleatorios (bajos y altos)
             obstacleTimer++;
             if (obstacleTimer >= obstacleInterval) {
                 let isHighObstacle = Math.random() > 0.5;
@@ -203,11 +226,9 @@
                 obstacleInterval = Math.floor(Math.random() * 40) + 70; 
             }
 
-            // Mover y verificar obstáculos
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 obstacles[i].x -= gameSpeed;
 
-                // Colisión ajustada al tamaño más ancho de Bao Bao
                 if (
                     player.x + 15 < obstacles[i].x + obstacles[i].width &&
                     player.x + player.width - 15 > obstacles[i].x &&
@@ -218,12 +239,10 @@
                     if (score > highScore) highScore = score;
                 }
 
-                // Eliminar obstáculos fuera de pantalla y sumar puntos
                 if (obstacles[i].x + obstacles[i].width < 0) {
                     obstacles.splice(i, 1);
                     score += 10;
 
-                    // Aumentar velocidad progresivamente cada 50 puntos
                     if (score % 50 === 0 && gameSpeed < 11) {
                         gameSpeed += 0.5;
                     }
@@ -234,16 +253,14 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Suelo brillante
+            // Suelo
             ctx.fillStyle = "#ffcc00";
             ctx.fillRect(0, 250, canvas.width, 4);
 
-            // Dibujar a Bao Bao con la nueva figura más ancha y robusta
             if (baoImage.complete) {
                 ctx.drawImage(baoImage, 0, 0, baoImage.width, baoImage.height, player.x, player.y, player.width, player.height);
             }
 
-            // Dibujar Obstáculos
             obstacles.forEach(obs => {
                 ctx.fillStyle = obs.isHigh ? "#ff3366" : "#e94560";
                 ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
@@ -255,14 +272,12 @@
                 }
             });
 
-            // Puntuación y Velocidad en pantalla
             ctx.fillStyle = "#ffffff";
             ctx.font = "18px 'Segoe UI'";
             ctx.fillText("SCORE: " + score, 20, 30);
             ctx.fillText("SPEED: " + gameSpeed.toFixed(1) + "x", canvas.width / 2 - 40, 30);
             ctx.fillText("HIGH: " + highScore, canvas.width - 130, 30);
 
-            // Pantalla de Inicio / Game Over
             if (!gameRunning) {
                 ctx.fillStyle = "rgba(15, 15, 27, 0.85)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -274,14 +289,14 @@
 
                 ctx.fillStyle = "#ffffff";
                 ctx.font = "16px 'Segoe UI'";
-                ctx.fillText(score === 0 ? "Haz Clic o Presiona Espacio para Iniciar" : "Puntuación Final: " + score, canvas.width / 2, 150);
+                ctx.fillText(score === 0 ? "Toca la pantalla o Presiona Espacio" : "Puntuación Final: " + score, canvas.width / 2, 150);
 
                 if (score > 0) {
                     ctx.fillStyle = "#ff3366";
-                    ctx.fillText("¡Te chocaste con una valla alta o un obstáculo!", canvas.width / 2, 185);
+                    ctx.fillText("¡Te chocaste con un obstáculo!", canvas.width / 2, 185);
 
                     ctx.fillStyle = "#ffcc00";
-                    ctx.fillText("Haz Clic o Presiona Espacio para Reintentar", canvas.width / 2, 220);
+                    ctx.fillText("Toca o Presiona Espacio para Reintentar", canvas.width / 2, 220);
                 }
                 ctx.textAlign = "left";
             }
