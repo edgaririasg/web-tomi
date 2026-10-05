@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Juego - EJIC STUDIO</title>
+    <style>
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #1a1a2e;
+            --accent-color: #e94560;
+            --bg-color: #0f0f1b;
+            --text-color: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        
+        header { 
+            background: rgba(26, 26, 46, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 18px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 3px solid var(--primary-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .logo-nav { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 12px; }
+        .logo-nav img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        
+        nav ul { display: flex; list-style: none; gap: 20px; align-items: center; }
+        nav ul li a { color: var(--text-color); text-decoration: none; font-size: 1rem; font-weight: 500; transition: color 0.3s, transform 0.3s; display: inline-block; }
+        nav ul li a:hover, nav ul li a.active { color: var(--primary-color); transform: translateY(-2px); }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        
+        .game-box { 
+            background: rgba(26, 26, 46, 0.7); 
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            transition: border-color 0.3s ease;
+        }
+        .game-box:hover { border-color: var(--primary-color); }
+        .game-box h2 { color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem; }
+        .game-box p { color: #b8b8b8; font-size: 1rem; margin-bottom: 20px; }
+
+        canvas {
+            background: linear-gradient(to bottom, #16213e, #0f0f1b);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            cursor: pointer;
+        }
+
+        .instructions {
+            margin-top: 15px;
+            color: var(--primary-color);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; margin-top: 40px; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 12px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-nav">
+            <img src="img/EJCI studio(3).png" alt="EJIC STUDIO Logo"> EJIC STUDIO
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="juegos.html">Juegos</a></li>
+                <li><a href="mini-juego.html" class="active">Mini Juego</a></li>
+                <li><a href="descargas.html">Descargas</a></li>
+                <li><a href="info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="game-box">
+            <h2>Bao Bao Run</h2>
+            <p>¡Ayuda a Bao Bao a superar los obstáculos y vallas en esta aventura de EJIC STUDIO!</p>
+            
+            <canvas id="gameCanvas" width="700" height="300"></canvas>
+            
+            <div class="instructions">
+                🎮 Presiona <b>Barra Espaciadora</b> o <b>Haz Clic</b> para saltar. ¡Cuidado con las vallas altas!
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 EJIC STUDIO - Todos los derechos reservados</p>
+    </footer>
+
+    <!-- Script de protección global antipiratería y alertas estilo gamer -->
+    <script src="app.js"></script>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Cargar la imagen real de Bao Bao sin fondo
+        const baoImage = new Image();
+        baoImage.src = "img/bao_bao.png"; 
+
+        let score = 0;
+        let highScore = 0;
+        let gameRunning = false;
+        let gameSpeed = 6;
+
+        // Jugador (Bao Bao con tamaño amplio y proporción robusta)
+        let player = {
+            x: 60,
+            y: 150,
+            width: 85,  // Ancho ampliado para que tenga excelente presencia
+            height: 95, // Altura ajustada proporcionalmente
+            dy: 0,
+            jumpPower: -12.5,
+            gravity: 0.65,
+            grounded: false
+        };
+
+        let obstacles = [];
+        let obstacleTimer = 0;
+        let obstacleInterval = 95;
+
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space") {
+                e.preventDefault();
+                triggerJump();
+            }
+        });
+
+        canvas.addEventListener("click", () => {
+            triggerJump();
+        });
+
+        function triggerJump() {
+            if (!gameRunning) {
+                resetGame();
+            } else if (player.grounded) {
+                player.dy = player.jumpPower;
+                player.grounded = false;
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            obstacles = [];
+            obstacleTimer = 0;
+            player.y = 150;
+            player.dy = 0;
+            gameSpeed = 6;
+            obstacleInterval = 95;
+            gameRunning = true;
+            loop();
+        }
+
+        function update() {
+            if (!gameRunning) return;
+
+            // Física del salto
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            let floorY = 250;
+            if (player.y + player.height > floorY) {
+                player.y = floorY - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            }
+
+            // Generar obstáculos aleatorios (bajos y altos)
+            obstacleTimer++;
+            if (obstacleTimer >= obstacleInterval) {
+                let isHighObstacle = Math.random() > 0.5;
+                
+                obstacles.push({
+                    x: canvas.width,
+                    y: isHighObstacle ? floorY - 70 : floorY - 38,
+                    width: isHighObstacle ? 32 : 28,
+                    height: isHighObstacle ? 70 : 38,
+                    isHigh: isHighObstacle,
+                    speed: gameSpeed
+                });
+
+                obstacleTimer = 0;
+                obstacleInterval = Math.floor(Math.random() * 40) + 70; 
+            }
+
+            // Mover y verificar obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+
+                // Colisión ajustada al tamaño más ancho de Bao Bao
+                if (
+                    player.x + 15 < obstacles[i].x + obstacles[i].width &&
+                    player.x + player.width - 15 > obstacles[i].x &&
+                    player.y + 15 < obstacles[i].y + obstacles[i].height &&
+                    player.y + player.height > obstacles[i].y
+                ) {
+                    gameRunning = false;
+                    if (score > highScore) highScore = score;
+                }
+
+                // Eliminar obstáculos fuera de pantalla y sumar puntos
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                    score += 10;
+
+                    // Aumentar velocidad progresivamente cada 50 puntos
+                    if (score % 50 === 0 && gameSpeed < 11) {
+                        gameSpeed += 0.5;
+                    }
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Suelo brillante
+            ctx.fillStyle = "#ffcc00";
+            ctx.fillRect(0, 250, canvas.width, 4);
+
+            // Dibujar a Bao Bao con la nueva figura más ancha y robusta
+            if (baoImage.complete) {
+                ctx.drawImage(baoImage, 0, 0, baoImage.width, baoImage.height, player.x, player.y, player.width, player.height);
+            }
+
+            // Dibujar Obstáculos
+            obstacles.forEach(obs => {
+                ctx.fillStyle = obs.isHigh ? "#ff3366" : "#e94560";
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                
+                if (obs.isHigh) {
+                    ctx.fillStyle = "#ffcc00";
+                    ctx.fillRect(obs.x + 5, obs.y + 12, obs.width - 10, 4);
+                    ctx.fillRect(obs.x + 5, obs.y + 35, obs.width - 10, 4);
+                }
+            });
+
+            // Puntuación y Velocidad en pantalla
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "18px 'Segoe UI'";
+            ctx.fillText("SCORE: " + score, 20, 30);
+            ctx.fillText("SPEED: " + gameSpeed.toFixed(1) + "x", canvas.width / 2 - 40, 30);
+            ctx.fillText("HIGH: " + highScore, canvas.width - 130, 30);
+
+            // Pantalla de Inicio / Game Over
+            if (!gameRunning) {
+                ctx.fillStyle = "rgba(15, 15, 27, 0.85)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#ffcc00";
+                ctx.font = "bold 26px 'Segoe UI'";
+                ctx.textAlign = "center";
+                ctx.fillText(score === 0 ? "BAO BAO RUN" : "¡FIN DEL JUEGO!", canvas.width / 2, 105);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "16px 'Segoe UI'";
+                ctx.fillText(score === 0 ? "Haz Clic o Presiona Espacio para Iniciar" : "Puntuación Final: " + score, canvas.width / 2, 150);
+
+                if (score > 0) {
+                    ctx.fillStyle = "#ff3366";
+                    ctx.fillText("¡Te chocaste con una valla alta o un obstáculo!", canvas.width / 2, 185);
+
+                    ctx.fillStyle = "#ffcc00";
+                    ctx.fillText("Haz Clic o Presiona Espacio para Reintentar", canvas.width / 2, 220);
+                }
+                ctx.textAlign = "left";
+            }
+        }
+
+        function loop() {
+            update();
+            draw();
+            if (gameRunning) {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        baoImage.onload = () => {
+            draw();
+        };
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juegos - EJIC STUDIO</title>
+    <style>
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #1a1a2e;
+            --accent-color: #e94560;
+            --bg-color: #0f0f1b;
+            --text-color: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; overflow-x: hidden; }
+        
+        header { 
+            background: rgba(26, 26, 46, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 18px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 3px solid var(--primary-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .logo-nav { color: var(--primary-color); font-size: 1.5rem; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 12px; }
+        .logo-nav img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        
+        nav ul { display: flex; list-style: none; gap: 25px; align-items: center; }
+        nav ul li a { color: var(--text-color); text-decoration: none; font-size: 1rem; font-weight: 500; transition: color 0.3s, transform 0.3s; display: inline-block; }
+        nav ul li a:hover, nav ul li a.active { color: var(--primary-color); transform: translateY(-2px); }
+
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; }
+        
+        .game-card { 
+            background: rgba(26, 26, 46, 0.7); 
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            padding: 40px; 
+            border-radius: 15px; 
+            margin-bottom: 40px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            transition: border-color 0.3s ease;
+            text-align: center;
+        }
+        .game-card:hover { border-color: var(--primary-color); }
+        .game-card h2 { color: var(--primary-color); font-size: 2rem; margin-bottom: 20px; }
+
+        /* Contenedores de imágenes adaptativos con efecto Neón */
+        .game-image-container {
+            margin: 20px auto;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            /* Efecto de brillo de neón sutil por defecto */
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.3), 0 5px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            background: #0f0f1b;
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+        }
+
+        /* Efecto de neón más intenso al pasar el cursor */
+        .game-image-container:hover {
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.7), 0 0 40px rgba(255, 204, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* Para la primera imagen (todos los personajes): más ancha y proporcionada */
+        .game-image-container.img-large {
+            max-width: 420px; 
+        }
+
+        /* Para las siguientes imágenes (más compactas) */
+        .game-image-container.img-normal {
+            max-width: 220px; 
+        }
+
+        .game-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .game-image-container img:hover {
+            transform: scale(1.03);
+        }
+
+        .game-card p { color: #b8b8b8; font-size: 1.1rem; line-height: 1.8; }
+
+        footer { text-align: center; padding: 30px; background-color: var(--secondary-color); border-top: 1px solid #333; color: #888; font-size: 0.9rem; }
+        footer p { margin: 5px 0; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 12px; padding: 15px; }
+            .game-image-container { max-width: 100%; }
+        }
+
+        /* Evita selección de texto y arrastre de imágenes en todo el sitio */
+        img {
+            -webkit-user-drag: none;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-nav">
+            <img src="img/EJCI studio(3).png" alt="EJIC STUDIO Logo"> EJIC STUDIO
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="juegos.html">Juegos</a></li>
+                <li><a href="mini-juego.html">Mini Juego</a></li>
+                <li><a href="descargas.html">Descargas</a></li>
+                <li><a href="info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenedor dinámico controlado por app.js -->
+    <div class="container" id="dynamic-games-container">
+        <!-- Los juegos y sus imágenes se inyectan automáticamente aquí -->
+    </div>
+
+    <footer>
+        <p><b>EJIC STUDIO</b> - HONDURAS, DANLÍ, EL PARAÍSO</p>
+        <p>Edgar Josué Irías Castellanos | ejicstudio@gmail.com</p>
+        <p>&copy; 2026 DERECHOS RESERVADOS</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
