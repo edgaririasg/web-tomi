@@ -157,3 +157,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+// Función para forzar la descarga de la imagen en cualquier navegador
+        function descargarFoto() {
+            const imageUrl = "img/Fodocumple.jpeg";
+            const fileName = "Fodocumple.jpeg";
+            
+            // Creamos un elemento <a> temporal para forzar la orden de descarga
+            const a = document.createElement("a");
+            a.href = imageUrl;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
